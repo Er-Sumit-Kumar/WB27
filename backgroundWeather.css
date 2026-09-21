@@ -15,17 +15,16 @@
         body {
             font-family: 'Inter', sans-serif;
             width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
             background-color: #000;
             color: var(--text-color);
             transition: background-color 2s ease;
         }
 
         #sky-container {
-            position: absolute;
+            position: fixed;
             inset: 0;
-            z-index: 1;
+            z-index: -3;
         }
 
         .sky-layer {
@@ -57,9 +56,9 @@
         #bg-night-windy { background: linear-gradient(180deg, #172554 0%, #1e3a8a 100%); }
 
         #celestials {
-            position: absolute;
+            position: fixed;
             inset: 0;
-            z-index: 2;
+            z-index: -2;
             pointer-events: none;
         }
 
@@ -126,8 +125,8 @@
         body.is-night.theme-snowy #moon { opacity: 0.1; filter: blur(4px); }
 
         #weather-canvas {
-            position: absolute;
+            position: fixed;
             inset: 0;
-            z-index: 3;
+            z-index: -1;
             pointer-events: none;
         }
