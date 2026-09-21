@@ -540,4 +540,4 @@ async function loadHTML(elementId, file) {
     }
 }
 
-loadHTML("backgroundWeather", "backgroundWeather.html");
+loadHTML("backgroundWeather", "./backgroundWeather.html");
