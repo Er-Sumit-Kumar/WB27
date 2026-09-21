@@ -21,41 +21,43 @@
 
 ---
 
-## 👁️ Visual Preview & Layer Architecture
+## ⚙️ Core Architecture & Data Flow
 
-The background is composed of three fixed (`z-index: negative`) layers that sit behind your website content:
-
-1. **The Sky Layer (`z-index: -3`):** Dynamic CSS gradients that transition smoothly between Day/Night and 5 different weather states.
-2. **The Celestials (`z-index: -2`):** CSS-animated Sun (with pulsing glows) and Moon (with textured craters). Their visibility and opacity react to cloud cover and time of day.
-3. **The Particle Canvas (`z-index: -1`):** A 60FPS HTML5 Canvas rendering physics-based particles:
-   - Twinkling stars
-   - Drifting layered clouds
-   - Parallax raindrops
-   - Swaying snowflakes
-   - Swirling autumn leaves & wind streaks
-
----
-
-## ⚙️ How It Works: Data Flow
-
-WB27 operates autonomously as soon as the script loads. It relies on a multi-stage fallback system to guarantee the background renders even if an API limit is reached.
-
-### Architecture Diagram
+WB27 operates autonomously. It relies on a multi-stage fallback system to guarantee the background renders even if an IP API limit is reached.
 
 ```mermaid
-graph TD;
-    A([Page Loads]) --> B{1. Geolocation Stage};
-    B -->|Ping multiple IP APIs concurrently| C[ipapi.is, ip.sb, FreeIPAPI, etc.];
-    C --> D[Select most reliable Lat/Lon];
-    
-    D --> E{2. Weather Stage};
-    E -->|Query via Lat/Lon| F[Open-Meteo Forecast API];
-    F --> G[Extract: Temp, Rain, Snow, Wind, Day/Night];
-    
-    G --> H{3. Logic Stage};
-    H -->|Analyze thresholds| I[Determine Climate Status];
-    
-    I -->|SUNNY, CLOUD, RAINING, SNOW, WIND| J{4. Render Stage};
-    J --> K[Update DOM body classes];
-    J --> L[Transition Sky Gradients];
-    J --> M[Spawn Canvas Particles & Animate];
+flowchart TD
+    classDef trigger fill:#1e293b,stroke:#cbd5e1,stroke-width:2px,color:#fff,rx:5px,ry:5px;
+    classDef api fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#fff,rx:5px,ry:5px;
+    classDef process fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff,rx:5px,ry:5px;
+    classDef render fill:#8b5cf6,stroke:#6d28d9,stroke-width:2px,color:#fff,rx:5px,ry:5px;
+
+    Start([🚀 Initialization]) :::trigger
+
+    subgraph Geo["🌍 Stage 1: Geolocation"]
+        direction TB
+        Start --> IPs{Concurrent IP Queries}
+        IPs -->|ipapi.is| IP1[IP Data] :::api
+        IPs -->|ip.sb| IP2[IP Data] :::api
+        IPs -->|FreeIPAPI| IP3[IP Data] :::api
+        IP1 & IP2 & IP3 --> Validate[Select Most Accurate Lat/Lon] :::process
+    end
+
+    subgraph Meteo["☁️ Stage 2: Meteorology"]
+        direction TB
+        Validate -->|Coordinates| OM(Open-Meteo API) :::api
+        OM --> Extract[Extract: Temp, Rain, Snow, Wind, Day/Night] :::process
+    end
+
+    subgraph Engine["🎨 Stage 3: Rendering Engine"]
+        direction TB
+        Extract --> Logic{Climate Logic Thresholds} :::process
+        Logic -->|Wind > 35km/h| StateWind[State: WIND]
+        Logic -->|Snow > 0| StateSnow[State: SNOW]
+        Logic -->|Default| StateClear[State: SUNNY/CLOUD]
+        
+        StateWind & StateSnow & StateClear --> DOM[Update DOM Theme Classes] :::render
+        DOM --> BG[CSS: Dynamic Sky Gradients] :::render
+        DOM --> Celestials[CSS: Sun/Moon Fade Transitions] :::render
+        DOM --> Canvas[Canvas 2D: Spawn Weather Particles] :::render
+    end
