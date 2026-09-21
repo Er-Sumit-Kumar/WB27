@@ -1,0 +1,133 @@
+        :root {
+            --ui-bg: rgba(15, 23, 42, 0.6);
+            --ui-border: rgba(255, 255, 255, 0.1);
+            --text-color: #f8fafc;
+        }
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #000;
+            color: var(--text-color);
+            transition: background-color 2s ease;
+        }
+
+        #sky-container {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .sky-layer {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            background-size: cover;
+        }
+
+        .sky-layer.active {
+            opacity: 1;
+        }
+
+        /* Isolated Background Gradients */
+        #bg-day-sunny   { background: linear-gradient(180deg, #3a7bd5 0%, #87CEEB 100%); }
+        #bg-night-sunny { background: linear-gradient(180deg, #020111 0%, #150a30 70%, #20124d 100%); }
+        
+        #bg-day-cloudy  { background: linear-gradient(180deg, #6a829a 0%, #8d9ba8 100%); }
+        #bg-night-cloudy{ background: linear-gradient(180deg, #11161d 0%, #212833 100%); }
+        
+        #bg-day-rainy   { background: linear-gradient(180deg, #4a5568 0%, #2d3748 100%); }
+        #bg-night-rainy { background: linear-gradient(180deg, #0f172a 0%, #020617 100%); }
+        
+        #bg-day-snowy   { background: linear-gradient(180deg, #cbd5e1 0%, #f1f5f9 100%); }
+        #bg-night-snowy { background: linear-gradient(180deg, #1e293b 0%, #334155 100%); }
+        
+        #bg-day-windy   { background: linear-gradient(180deg, #7dd3fc 0%, #e0f2fe 100%); }
+        #bg-night-windy { background: linear-gradient(180deg, #172554 0%, #1e3a8a 100%); }
+
+        #celestials {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .celestial-body {
+            position: absolute;
+            border-radius: 50%;
+            transition: opacity 2s ease-in-out, transform 2s ease-out, filter 2s ease;
+        }
+
+        /* Sun - Top Left */
+        #sun {
+            top: 60px;
+            left: 80px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ffffff 0%, #fffbd5 30%, #ffde00 70%, transparent 100%);
+            box-shadow: 0 0 60px #ffde00, 0 0 120px #ffb300, inset 0 0 20px #fff;
+            opacity: 0;
+            transform: translateY(50px) scale(0.8);
+            animation: sunPulse 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes sunPulse {
+            0% { box-shadow: 0 0 60px #ffde00, 0 0 120px #ffb300; }
+            100% { box-shadow: 0 0 80px #ffde00, 0 0 150px #ffb300; }
+        }
+
+        /* Moon - Top Right */
+        #moon {
+            top: 60px;
+            right: 80px;
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 30% 30%, #ffffff 0%, #d4d4d4 50%, #9e9e9e 100%);
+            box-shadow: 0 0 40px #ffffff, 0 0 80px #b0c4de, inset -10px -10px 20px rgba(0,0,0,0.5);
+            opacity: 0;
+            transform: translateY(50px) scale(0.8);
+        }
+
+        .crater {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 50%;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        .crater-1 { top: 20%; left: 55%; width: 22px; height: 22px; }
+        .crater-2 { top: 60%; left: 30%; width: 14px; height: 14px; }
+        .crater-3 { top: 50%; left: 70%; width: 18px; height: 18px; }
+
+        /* Default Day/Night visibility */
+        body.is-day #sun { opacity: 1; transform: translateY(0) scale(1); }
+        body.is-day #moon { opacity: 0 !important; }
+        body.is-night #moon { opacity: 1; transform: translateY(0) scale(1); }
+        body.is-night #sun { opacity: 0 !important; }
+
+        /* Dimming/Hiding Sun and Moon during bad weather */
+        body.is-day.theme-cloudy #sun { opacity: 0.15; filter: blur(4px); }
+        body.is-night.theme-cloudy #moon { opacity: 0.15; filter: blur(4px); }
+        
+        body.is-day.theme-rainy #sun { opacity: 0; transform: translateY(-20px); }
+        body.is-night.theme-rainy #moon { opacity: 0; transform: translateY(-20px); }
+        
+        body.is-day.theme-snowy #sun { opacity: 0.05; filter: blur(6px); }
+        body.is-night.theme-snowy #moon { opacity: 0.1; filter: blur(4px); }
+
+        #weather-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
